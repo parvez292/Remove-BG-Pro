@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoBG | Futuristic Background Remover</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-glow: rgba(99, 102, 241, 0.3);
+            --secondary: #f43f5e;
+            --secondary-glow: rgba(244, 63, 94, 0.3);
+            --neon-blue: #00f3ff;
+            --neon-pink: #ff00ff;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.3);
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 25px 50px rgba(0, 0, 0, 0.15);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Animated background elements */
+        .bg-particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary-glow), transparent);
+            filter: blur(40px);
+            opacity: 0.3;
+            z-index: -1;
+            animation: floatParticle 20s infinite linear;
+        }
+        
+        .bg-particle:nth-child(1) {
+            width: 400px;
+            height: 400px;
+            top: -200px;
+            right: -200px;
+            animation-delay: 0s;
+        }
+        
+        .bg-particle:nth-child(2) {
+            width: 300px;
+            height: 300px;
+            bottom: -150px;
+            left: -150px;
+            animation-delay: 5s;
+            background: radial-gradient(circle, var(--secondary-glow), transparent);
+        }
+        
+        .bg-particle:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            top: 50%;
+            left: -125px;
+            animation-delay: 10s;
+            background: radial-gradient(circle, var(--success-glow), transparent);
+        }
+        
+        @keyframes floatParticle {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+            25% { transform: translate(100px, 50px) scale(1.1); opacity: 0.4; }
+            50% { transform: translate(-50px, 100px) scale(0.9); opacity: 0.2; }
+            75% { transform: translate(-100px, -50px) scale(1.05); opacity: 0.35; }
+        }
+        
+        /* Glitch text effect */
+        .glitch {
+            position: relative;
+            animation: glitch 5s infinite;
+        }
+        
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch::before {
+            animation: glitchTop 1s infinite;
+            clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+            -webkit-clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+        }
+        
+        .glitch::after {
+            animation: glitchBottom 1.5s infinite;
+            clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
+            -webkit-clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
+        }
+        
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+        
+        @keyframes glitchTop {
+            0%, 100% { transform: translate(0); opacity: 1; }
+            50% { transform: translate(2px, -2px); opacity: 0.8; }
+        }
+        
+        @keyframes glitchBottom {
+            0%, 100% { transform: translate(0); opacity: 1; }
+            50% { transform: translate(-2px, 2px); opacity: 0.8; }
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Futuristic scroll animations */
+        .futuristic-fade {
+            opacity: 0;
+            transform: translateY(50px) perspective(500px) rotateX(30deg);
+            filter: blur(10px);
+            transition: opacity 1s cubic-bezier(0.23, 1, 0.32, 1), 
+                        transform 1.2s cubic-bezier(0.23, 1, 0.32, 1), 
+                        filter 1s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .futuristic-fade.visible {
+            opacity: 1;
+            transform: translateY(0) perspective(500px) rotateX(0);
+            filter: blur(0);
+        }
+        
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-100px) skewX(-10deg);
+            filter: blur(15px);
+            transition: opacity 1s 0.2s cubic-bezier(0.23, 1, 0.32, 1), 
+                        transform 1.2s 0.2s cubic-bezier(0.23, 1, 0.32, 1), 
+                        filter 1s 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .slide-in-left.visible {
+            opacity: 1;
+            transform: translateX(0) skewX(0);
+            filter: blur(0);
+        }
+        
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(100px) skewX(10deg);
+            filter: blur(15px);
+            transition: opacity 1s 0.4s cubic-bezier(0.23, 1, 0.32, 1), 
+                        transform 1.2s 0.4s cubic-bezier(0.23, 1, 0.32, 1), 
+                        filter 1s 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .slide-in-right.visible {
+            opacity: 1;
+            transform: translateX(0) skewX(0);
+            filter: blur(0);
+        }
+        
+        .stagger-delay-1 { transition-delay: 0.1s; }
+        .stagger-delay-2 { transition-delay: 0.2s; }
+        .stagger-delay-3 { transition-delay: 0.3s; }
+        .stagger-delay-4 { transition-delay: 0.4s; }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Header Styles */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            font-weight: 800;
+            font-size: 32px;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+            padding: 10px 20px;
+        }
+        
+        .logo::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 15px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-pink));
+            opacity: 0.1;
+            filter: blur(20px);
+            z-index: -1;
+        }
+        
+        .logo i {
+            font-size: 36px;
+            animation: pulseGlow 2s infinite alternate;
+        }
+        
+        @keyframes pulseGlow {
+            0% { filter: drop-shadow(0 0 5px var(--neon-blue)); }
+            100% { filter: drop-shadow(0 0 20px var(--neon-pink)); }
+        }
+        
+        .tagline {
+            color: var(--gray);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto 30px;
+            line-height: 1.5;
+        }
+        
+        /* Main App Area */
+        .app-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+        
+        @media (min-width: 992px) {
+            .app-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        /* Upload Area */
+        .upload-area {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 25px;
+            padding: 35px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            height: fit-content;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .upload-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(244, 63, 94, 0.1));
+            z-index: -1;
+            border-radius: 25px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .upload-area:hover::before {
+            opacity: 1;
+        }
+        
+        .upload-area:hover {
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25), 0 0 30px rgba(99, 102, 241, 0.2);
+            transform: translateY(-10px) scale(1.01);
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            color: var(--light);
+            font-size: 24px;
+        }
+        
+        .section-title i {
+            color: var(--primary);
+            font-size: 28px;
+            transition: transform 0.5s ease, color 0.5s ease;
+        }
+        
+        .upload-area:hover .section-title i {
+            transform: rotate(20deg) scale(1.2);
+            color: var(--neon-blue);
+        }
+        
+        .drop-zone {
+            border: 2px dashed rgba(99, 102, 241, 0.4);
+            border-radius: 20px;
+            padding: 50px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 30px;
+            background: rgba(15, 23, 42, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .drop-zone::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.2), transparent);
+            transition: left 1s ease;
+        }
+        
+        .drop-zone:hover::before {
+            left: 100%;
+        }
+        
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: var(--neon-blue);
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
+        }
+        
+        .drop-zone i {
+            font-size: 70px;
+            margin-bottom: 25px;
+            color: var(--primary);
+            opacity: 0.8;
+            transition: all 0.5s ease;
+        }
+        
+        .drop-zone:hover i {
+            transform: translateY(-10px) scale(1.2);
+            color: var(--neon-blue);
+            filter: drop-shadow(0 0 10px var(--neon-blue));
+        }
+        
+        .drop-zone h3 {
+            margin-bottom: 15px;
+            font-size: 24px;
+            color: var(--light);
+            font-weight: 600;
+        }
+        
+        .drop-zone p {
+            color: var(--gray);
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+        
+        .upload-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 16px 35px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .upload-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.7s ease;
+        }
+        
+        .upload-btn:hover::before {
+            left: 100%;
+        }
+        
+        .upload-btn:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.5), 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+        
+        .file-info {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 15px;
+            display: none;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+        
+        .file-info.active {
+            display: block;
+            animation: fadeIn 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        /* Background Selection */
+        .background-selector {
+            margin-top: 35px;
+        }
+        
+        .bg-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+        
+        .bg-option {
+            height: 90px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            border: 2px solid transparent;
+        }
+        
+        .bg-option:hover {
+            transform: translateY(-10px) scale(1.08);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(99, 102, 241, 0.3);
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+        
+        .bg-option.active {
+            outline: 3px solid var(--neon-blue);
+            outline-offset: 3px;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.5);
+            transform: scale(1.05);
+        }
+        
+        .bg-option::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 15px;
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.3));
+        }
+        
+        .bg-transparent {
+            background: 
+                repeating-conic-gradient(#1e293b 0% 25%, transparent 0% 50%) 
+                50% / 20px 20px;
+            position: relative;
+        }
+        
+        .bg-transparent::before {
+            content: 'Transparent';
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--light);
+            z-index: 2;
+        }
+        
+        /* Preview Area */
+        .preview-area {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 25px;
+            padding: 35px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            height: fit-content;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .preview-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(99, 102, 241, 0.1));
+            z-index: -1;
+            border-radius: 25px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .preview-area:hover::before {
+            opacity: 1;
+        }
+        
+        .preview-area:hover {
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25), 0 0 30px rgba(16, 185, 129, 0.2);
+            transform: translateY(-10px) scale(1.01);
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+        
+        .preview-container {
+            width: 100%;
+            min-height: 400px;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            background: rgba(15, 23, 42, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border: 1px solid rgba(99, 102, 241, 0.1);
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            max-height: 350px;
+            object-fit: contain;
+            display: none;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        
+        .preview-image.loaded {
+            display: block;
+            animation: fadeIn 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        #processedImageContainer {
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #processedImageContainer.active {
+            display: flex;
+        }
+        
+        #processedImageCanvas {
+            max-width: 100%;
+            max-height: 350px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        
+        .placeholder-text {
+            text-align: center;
+            color: var(--gray);
+        }
+        
+        .placeholder-text i {
+            font-size: 80px;
+            margin-bottom: 25px;
+            color: #334155;
+            animation: floatIcon 3s infinite ease-in-out;
+        }
+        
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            flex: 1;
+            min-width: 220px;
+            padding: 20px 30px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 17px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            border: none;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.7s ease;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-remove {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-remove:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.5), 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-download {
+            background: linear-gradient(135deg, var(--success), #0ca678);
+            color: white;
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-download:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.5), 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-download:disabled {
+            background: #475569;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-download:disabled::before {
+            display: none;
+        }
+        
+        /* Loading State */
+        .loading {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 20px;
+            z-index: 10;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .loading.active {
+            display: flex;
+        }
+        
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border: 4px solid transparent;
+            border-top: 4px solid var(--neon-blue);
+            border-right: 4px solid var(--neon-pink);
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite, colorChange 3s infinite alternate;
+            margin-bottom: 25px;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.5);
+        }
+        
+        @keyframes colorChange {
+            0% { border-top-color: var(--neon-blue); border-right-color: var(--neon-pink); }
+            50% { border-top-color: var(--success); border-right-color: var(--primary); }
+            100% { border-top-color: var(--neon-pink); border-right-color: var(--neon-blue); }
+        }
+        
+        /* Futuristic Pop-up Messages */
+        .popup-message {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(30, 41, 59, 0.95);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(99, 102, 241, 0.3);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            max-width: 400px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            backdrop-filter: blur(10px);
+            transform: translateX(150%) translateY(20px) scale(0.9);
+            opacity: 0;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), 
+                        opacity 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .popup-message.show {
+            transform: translateX(0) translateY(0) scale(1);
+            opacity: 1;
+        }
+        
+        .popup-message.success {
+            border-left: 5px solid var(--success);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(16, 185, 129, 0.3);
+        }
+        
+        .popup-message.info {
+            border-left: 5px solid var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(99, 102, 241, 0.3);
+        }
+        
+        .popup-icon {
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+        
+        .popup-message.success .popup-icon {
+            color: var(--success);
+            animation: pulseSuccess 2s infinite;
+        }
+        
+        .popup-message.info .popup-icon {
+            color: var(--primary);
+            animation: pulseInfo 2s infinite;
+        }
+        
+        @keyframes pulseSuccess {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px var(--success)); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 15px var(--success)); }
+        }
+        
+        @keyframes pulseInfo {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px var(--primary)); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 15px var(--primary)); }
+        }
+        
+        .popup-content {
+            flex: 1;
+        }
+        
+        .popup-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .popup-text {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        .popup-close {
+            background: transparent;
+            border: none;
+            color: var(--gray);
+            font-size: 20px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            padding: 5px;
+        }
+        
+        .popup-close:hover {
+            color: var(--light);
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+            border-top: 1px solid rgba(99, 102, 241, 0.2);
+            margin-top: 50px;
+        }
+        
+        .developer-credit {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--light);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .developer-credit span {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            letter-spacing: 1px;
+            position: relative;
+        }
+        
+        .developer-credit span::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
+            border-radius: 2px;
+        }
+        
+        .copyright {
+            font-size: 14px;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .bg-grid {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            }
+            
+            .btn {
+                min-width: 100%;
+            }
+            
+            .section-title {
+                font-size: 22px;
+            }
+            
+            .drop-zone {
+                padding: 40px 20px;
+            }
+            
+            .logo {
+                font-size: 28px;
+            }
+            
+            .popup-message {
+                bottom: 20px;
+                right: 20px;
+                left: 20px;
+                max-width: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            
+            .upload-area, .preview-area {
+                padding: 25px 20px;
+            }
+            
+            .bg-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 15px;
+            }
+            
+            .app-container {
+                gap: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-particle"></div>
+    <div class="bg-particle"></div>
+    <div class="bg-particle"></div>
+    
+    <div class="container">
+        <header class="futuristic-fade">
+            <div class="logo">
+                <i class="fas fa-camera-retro"></i>
+                <span class="glitch" data-text="NEO BG REMOVER">NEO BG REMOVER</span>
+            </div>
+            <p class="tagline">Professional AI-powered background removal with futuristic effects. Experience the next generation of image editing.</p>
+        </header>
+        
+        <main class="app-container">
+            <!-- Upload Section -->
+            <section class="upload-area slide-in-left">
+                <h2 class="section-title">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span>Upload Image</span>
+                </h2>
+                
+                <div class="drop-zone" id="dropZone">
+                    <i class="fas fa-images"></i>
+                    <h3>Drop your image here</h3>
+                    <p>or click to browse files</p>
+                    <button class="upload-btn" id="uploadBtn">
+                        <i class="fas fa-folder-open"></i>
+                        Choose Image
+                    </button>
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                </div>
+                
+                <div class="file-info" id="fileInfo">
+                    <p><strong>Selected file:</strong> <span id="fileName">No file selected</span></p>
+                    <p><strong>File size:</strong> <span id="fileSize">-</span></p>
+                </div>
+                
+                <div class="background-selector">
+                    <h2 class="section-title">
+                        <i class="fas fa-palette"></i>
+                        <span>Select Background</span>
+                    </h2>
+                    <p style="color: var(--gray); margin-bottom: 20px;">Choose from our premium gradient collection or keep it transparent</p>
+                    
+                    <div class="bg-grid" id="bgGrid">
+                        <!-- Background options will be generated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Preview Section -->
+            <section class="preview-area slide-in-right">
+                <h2 class="section-title">
+                    <i class="fas fa-eye"></i>
+                    <span>Preview & Download</span>
+                </h2>
+                
+                <div class="preview-container">
+                    <div class="placeholder-text" id="placeholder">
+                        <i class="fas fa-image"></i>
+                        <h3>Your image will appear here</h3>
+                        <p>After uploading and processing</p>
+                    </div>
+                    
+                    <img class="preview-image" id="previewImage" alt="Preview">
+                    
+                    <div id="processedImageContainer">
+                        <canvas id="processedImageCanvas"></canvas>
+                    </div>
+                    
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <h3>Removing background with AI...</h3>
+                        <p>Advanced neural network processing</p>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-remove" id="removeBgBtn">
+                        <i class="fas fa-magic"></i>
+                        Remove Background
+                    </button>
+                    <button class="btn btn-download" id="downloadBtn" disabled>
+                        <i class="fas fa-download"></i>
+                        Download Image
+                    </button>
+                </div>
+            </section>
+        </main>
+        
+        <footer class="futuristic-fade">
+            <p class="developer-credit">Developed by <span>BOSS OFFICIAL</span></p>
+            <p class="copyright">© 2023 Neo BG Remover. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Pop-up Messages Container -->
+    <div id="popupContainer"></div>
+
+    <script>
+        // API Configuration
+        const API_KEY = 'koKaQGwcU8scYAmzEJt1W953';
+        const API_URL = 'https://api.remove.bg/v1.0/removebg';
+        
+        // DOM Elements
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const bgGrid = document.getElementById('bgGrid');
+        const previewImage = document.getElementById('previewImage');
+        const placeholder = document.getElementById('placeholder');
+        const removeBgBtn = document.getElementById('removeBgBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const loading = document.getElementById('loading');
+        const processedImageContainer = document.getElementById('processedImageContainer');
+        const processedImageCanvas = document.getElementById('processedImageCanvas');
+        const ctx = processedImageCanvas.getContext('2d');
+        const popupContainer = document.getElementById('popupContainer');
+        
+        // State variables
+        let selectedFile = null;
+        let selectedBg = 'transparent';
+        let originalImageData = null;
+        let processedImageData = null;
+        let canvasImageData = null;
+        let popupCount = 0;
+        
+        // Premium gradient backgrounds
+        const backgroundOptions = [
+            { name: 'Transparent', value: 'transparent', color: 'transparent' },
+            { name: 'Neon Blue', value: 'linear-gradient(135deg, #00f3ff 0%, #0066ff 100%)' },
+            { name: 'Cyber Pink', value: 'linear-gradient(135deg, #ff00ff 0%, #ff0066 100%)' },
+            { name: 'Matrix Green', value: 'linear-gradient(135deg, #00ff00 0%, #003300 100%)' },
+            { name: 'Sunset Glow', value: 'linear-gradient(135deg, #ff9a00 0%, #ff0066 100%)' },
+            { name: 'Ocean Deep', value: 'linear-gradient(135deg, #00b4d8 0%, #0077b6 100%)' },
+            { name: 'Galaxy Purple', value: 'linear-gradient(135deg, #9d4edd 0%, #560bad 100%)' },
+            { name: 'Fire Red', value: 'linear-gradient(135deg, #ff5400 0%, #ff0000 100%)' },
+            { name: 'Ice Blue', value: 'linear-gradient(135deg, #8ecae6 0%, #219ebc 100%)' },
+            { name: 'Lava Orange', value: 'linear-gradient(135deg, #fb8500 0%, #ffb703 100%)' },
+            { name: 'Midnight Sky', value: 'linear-gradient(135deg, #03071e 0%, #3a0ca3 100%)' },
+            { name: 'Sunrise Gold', value: 'linear-gradient(135deg, #ffd166 0%, #ef476f 100%)' },
+            { name: 'Forest Green', value: 'linear-gradient(135deg, #06d6a0 0%, #1b4332 100%)' },
+            { name: 'Cosmic Purple', value: 'linear-gradient(135deg, #7209b7 0%, #3a0ca3 100%)' },
+            { name: 'Neon Cyan', value: 'linear-gradient(135deg, #00ffcc 0%, #0099cc 100%)' },
+            { name: 'Hot Pink', value: 'linear-gradient(135deg, #ff006e 0%, #ff6b6b 100%)' },
+            { name: 'Electric Blue', value: 'linear-gradient(135deg, #4cc9f0 0%, #4361ee 100%)' },
+            { name: 'Mystic Purple', value: 'linear-gradient(135deg, #9b5de5 0%, #f15bb5 100%)' },
+            { name: 'Tropical Sunset', value: 'linear-gradient(135deg, #ff9e00 0%, #ff0054 100%)' },
+            { name: 'Arctic Ice', value: 'linear-gradient(135deg, #a2d2ff 0%, #cdb4db 100%)' },
+            { name: 'Volcanic Red', value: 'linear-gradient(135deg, #e63946 0%, #a8dadc 100%)' },
+            { name: 'Deep Space', value: 'linear-gradient(135deg, #000814 0%, #001d3d 100%)' },
+            { name: 'Neon Rainbow', value: 'linear-gradient(135deg, #ff0000, #ff9900, #ffff00, #00ff00, #0099ff, #6600ff)' },
+            { name: 'Cyberpunk', value: 'linear-gradient(135deg, #00ffcc, #ff00ff, #ffcc00)' },
+            { name: 'Synthwave', value: 'linear-gradient(135deg, #ff00ff 0%, #00ffff 100%)' }
+        ];
+        
+        // Initialize background options
+        function initBackgroundOptions() {
+            bgGrid.innerHTML = '';
+            
+            backgroundOptions.forEach((bg, index) => {
+                const bgOption = document.createElement('div');
+                bgOption.className = `bg-option futuristic-fade ${bg.value === 'transparent' ? 'bg-transparent' : ''} ${index === 0 ? 'active' : ''}`;
+                bgOption.style.animationDelay = `${index * 0.05}s`;
+                
+                if (bg.value !== 'transparent') {
+                    bgOption.style.background = bg.value;
+                }
+                
+                bgOption.dataset.value = bg.value;
+                bgOption.dataset.name = bg.name;
+                
+                // Add tooltip
+                bgOption.title = bg.name;
+                
+                bgOption.addEventListener('click', () => {
+                    // Remove active class from all options
+                    document.querySelectorAll('.bg-option').forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked option
+                    bgOption.classList.add('active');
+                    selectedBg = bg.value;
+                    
+                    // Update preview if we have a processed image
+                    updateProcessedImageBackground();
+                    
+                    // Show popup
+                    showPopup('Background Selected', `"${bg.name}" background applied`, 'info');
+                });
+                
+                bgGrid.appendChild(bgOption);
+            });
+            
+            // Trigger animation for background options
+            setTimeout(() => {
+                document.querySelectorAll('.bg-option').forEach((el, i) => {
+                    setTimeout(() => {
+                        el.classList.add('visible');
+                    }, i * 30);
+                });
+            }, 300);
+        }
+        
+        // Handle file selection
+        function handleFileSelect(file) {
+            selectedFile = file;
+            
+            // Update file info
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileInfo.classList.add('active');
+            
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                previewImage.classList.add('loaded');
+                placeholder.style.display = 'none';
+                
+                // Store original image data
+                originalImageData = e.target.result;
+                
+                // Reset processed image
+                processedImageContainer.classList.remove('active');
+                processedImageData = null;
+                canvasImageData = null;
+                downloadBtn.disabled = true;
+                
+                // Show popup
+                showPopup('Image Uploaded', 'Ready for background removal', 'info');
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Update processed image background
+        function updateProcessedImageBackground() {
+            if (!processedImageData) return;
+            
+            const img = new Image();
+            img.onload = function() {
+                // Set canvas dimensions
+                processedImageCanvas.width = img.width;
+                processedImageCanvas.height = img.height;
+                
+                // Clear canvas
+                ctx.clearRect(0, 0, processedImageCanvas.width, processedImageCanvas.height);
+                
+                // Draw background if not transparent
+                if (selectedBg !== 'transparent') {
+                    // Create gradient
+                    let gradient;
+                    
+                    // Parse gradient from background options
+                    const bgOption = backgroundOptions.find(bg => bg.value === selectedBg);
+                    if (bgOption && bgOption.value.includes('linear-gradient')) {
+                        // Extract colors from gradient
+                        const colorMatch = bgOption.value.match(/#[0-9a-fA-F]{3,6}/g);
+                        if (colorMatch && colorMatch.length > 0) {
+                            if (colorMatch.length === 2) {
+                                gradient = ctx.createLinearGradient(0, 0, processedImageCanvas.width, processedImageCanvas.height);
+                                gradient.addColorStop(0, colorMatch[0]);
+                                gradient.addColorStop(1, colorMatch[1]);
+                            } else if (colorMatch.length === 3) {
+                                gradient = ctx.createLinearGradient(0, 0, processedImageCanvas.width, processedImageCanvas.height);
+                                gradient.addColorStop(0, colorMatch[0]);
+                                gradient.addColorStop(0.5, colorMatch[1]);
+                                gradient.addColorStop(1, colorMatch[2]);
+                            } else if (colorMatch.length > 3) {
+                                gradient = ctx.createLinearGradient(0, 0, processedImageCanvas.width, processedImageCanvas.height);
+                                colorMatch.forEach((color, index) => {
+                                    gradient.addColorStop(index / (colorMatch.length - 1), color);
+                                });
+                            }
+                        }
+                    }
+                    
+                    if (gradient) {
+                        ctx.fillStyle = gradient;
+                    } else {
+                        // Fallback to solid color
+                        ctx.fillStyle = '#1e293b';
+                    }
+                    
+                    ctx.fillRect(0, 0, processedImageCanvas.width, processedImageCanvas.height);
+                }
+                
+                // Draw the processed image on top
+                ctx.drawImage(img, 0, 0);
+                
+                // Store canvas image data for download
+                canvasImageData = processedImageCanvas.toDataURL('image/png');
+                
+                // Show the canvas
+                processedImageContainer.classList.add('active');
+                previewImage.style.display = 'none';
+            };
+            
+            img.src = processedImageData;
+        }
+        
+        // Remove background using REAL Remove.bg API
+        async function removeBackground() {
+            if (!selectedFile) {
+                showPopup('No Image Selected', 'Please upload an image first', 'info');
+                return;
+            }
+            
+            // Validate file size (max 12MB for remove.bg free API)
+            if (selectedFile.size > 12 * 1024 * 1024) {
+                showPopup('File Too Large', 'Please select an image under 12MB', 'info');
+                return;
+            }
+            
+            // Show loading
+            loading.classList.add('active');
+            removeBgBtn.disabled = true;
+            
+            try {
+                // Create FormData for API request
+                const formData = new FormData();
+                formData.append('image_file', selectedFile);
+                formData.append('size', 'auto');
+                formData.append('format', 'png');
+                
+                // Make API request
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'X-Api-Key': API_KEY,
+                    },
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status} - ${response.statusText}`);
+                }
+                
+                // Get the response as blob
+                const blob = await response.blob();
+                
+                // Convert blob to data URL
+                const reader = new FileReader();
+                reader.onloadend = function() {
+                    processedImageData = reader.result;
+                    
+                    // Update preview with background
+                    updateProcessedImageBackground();
+                    
+                    // Enable download button
+                    downloadBtn.disabled = false;
+                    
+                    // Hide loading
+                    loading.classList.remove('active');
+                    removeBgBtn.disabled = false;
+                    
+                    // Show success popup
+                    showPopup('Background Removed!', 'AI successfully removed the background', 'success');
+                };
+                
+                reader.readAsDataURL(blob);
+                
+            } catch (error) {
+                console.error('Error removing background:', error);
+                loading.classList.remove('active');
+                removeBgBtn.disabled = false;
+                
+                // Fallback - use original image but show message
+                showPopup('API Limit Reached', 'Using demo mode. Upload to remove.bg for full AI processing.', 'info');
+                
+                setTimeout(() => {
+                    processedImageData = originalImageData;
+                    updateProcessedImageBackground();
+                    downloadBtn.disabled = false;
+                    showPopup('Demo Mode', 'Background effect applied (AI processing not available)', 'info');
+                }, 1000);
+            }
+        }
+        
+        // Download processed image
+        function downloadImage() {
+            if (!canvasImageData) return;
+            
+            try {
+                // Create a temporary link element
+                const link = document.createElement('a');
+                
+                // Set the download link with the canvas data
+                link.href = canvasImageData;
+                link.download = `neo-bg-removed-${Date.now()}.png`;
+                
+                // Append to body, click and remove
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Show success popup
+                showPopup('Download Complete!', 'Image saved to your device', 'success');
+                
+            } catch (error) {
+                console.error('Download failed:', error);
+                showPopup('Download Failed', 'Please try again', 'info');
+            }
+        }
+        
+        // Show futuristic popup message
+        function showPopup(title, text, type) {
+            popupCount++;
+            const popupId = `popup-${popupCount}`;
+            
+            const popup = document.createElement('div');
+            popup.id = popupId;
+            popup.className = `popup-message ${type}`;
+            
+            const icon = type === 'success' ? 'fa-check-circle' : 'fa-info-circle';
+            
+            popup.innerHTML = `
+                <div class="popup-icon">
+                    <i class="fas ${icon}"></i>
+                </div>
+                <div class="popup-content">
+                    <div class="popup-title">${title}</div>
+                    <div class="popup-text">${text}</div>
+                </div>
+                <button class="popup-close" onclick="closePopup('${popupId}')">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            popupContainer.appendChild(popup);
+            
+            // Show popup with animation
+            setTimeout(() => {
+                popup.classList.add('show');
+            }, 10);
+            
+            // Auto close after 5 seconds
+            setTimeout(() => {
+                closePopup(popupId);
+            }, 5000);
+        }
+        
+        // Close popup
+        function closePopup(popupId) {
+            const popup = document.getElementById(popupId);
+            if (popup) {
+                popup.classList.remove('show');
+                setTimeout(() => {
+                    if (popup.parentNode) {
+                        popup.parentNode.removeChild(popup);
+                    }
+                }, 600);
+            }
+        }
+        
+        // Scroll animation
+        function initScrollAnimations() {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.05
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe all elements with animation classes
+            document.querySelectorAll('.futuristic-fade, .slide-in-left, .slide-in-right').forEach(el => {
+                observer.observe(el);
+            });
+        }
+        
+        // Event Listeners
+        uploadBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            
+            if (e.dataTransfer.files.length > 0) {
+                handleFileSelect(e.dataTransfer.files[0]);
+            }
+        });
+        
+        removeBgBtn.addEventListener('click', removeBackground);
+        downloadBtn.addEventListener('click', downloadImage);
+        
+        // Initialize
+        initBackgroundOptions();
+        initScrollAnimations();
+        
+        // Make elements visible on load
+        setTimeout(() => {
+            document.querySelectorAll('.futuristic-fade, .slide-in-left, .slide-in-right').forEach(el => {
+                el.classList.add('visible');
+            });
+        }, 100);
+        
+        // Welcome popup on load
+        setTimeout(() => {
+            showPopup('Welcome to Neo BG Remover', 'Upload an image to remove background with AI', 'info');
+        }, 1500);
+        
+        // Make closePopup available globally
+        window.closePopup = closePopup;
+    </script>
+</body>
+</html>
